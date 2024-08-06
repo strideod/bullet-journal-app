@@ -1,3 +1,4 @@
+from datetime import datetime, time
 from fastapi import APIRouter, Body, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
@@ -17,8 +18,23 @@ def create_task(request: Request, task: DailyLog = Body(...)):
     return created_task
 
 @router.get("/", response_description="List all tasks", response_model=List[DailyLog])
-def list_daily_tasks(request: Request):
+def list_all_tasks(request: Request):
     tasks = list(request.app.database["tasks"].find(limit=100))
+    return tasks
+
+@router.get("/daily", response_description="Show today's tasks", response_model=List[DailyLog])
+def list_daily_tasks(request: Request):
+    time_now = datetime.now()
+    start_of_day = datetime.combine(time_now, time.min)
+    end_of_day = datetime.combine(time_now, time.max)
+
+    tasks = list(request.app.database["tasks"].find({
+        # {date: {$gte: "2024-08-05", $lt: "2024-08-05T23:59:59.999999Z"}}
+        "date": {
+            "$gte": start_of_day,
+            "$lt": end_of_day
+        }
+    }))
     return tasks
 
 @router.get("/{id}", response_description="Get a single task by id", response_model=DailyLog)
