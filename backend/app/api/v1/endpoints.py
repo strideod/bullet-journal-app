@@ -62,4 +62,12 @@ def update_entry(id: str, request: Request, entry: UpdateBaseEntry = Body(...)):
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Entry with ID {id} not found.")
 
-# TODO: Add delete entry endpoint
+@router.delete("/{id}", response_description="Delete an entry", response_model=Entry)
+def delete_entry(id: str, request: Request, response: Response):
+    delete_result = request.app.database["entries"].delete_one({"_id": id})
+
+    if delete_result.deleted_count == 1:
+        response.status_code = status.HTTP_204_NO_CONTENT
+        return response
+    
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Entry with ID {id} not found.")
