@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Optional, Union
 from pydantic import BaseModel, Field
 
-class LogType(str, Enum):
+class EntryType(str, Enum):
     task = "task"
     note = "note"
     event = "event"
@@ -16,9 +16,9 @@ class TaskStatus(str, Enum):
     task_scheduled = "task scheduled"
     task_irrelevant = "task irrelevant"
 
-class BaseLog(BaseModel):
+class BaseEntry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), alias="_id")
-    type: LogType = Field(...)
+    type: EntryType = Field(...)
     date: datetime = Field(default_factory=lambda: datetime.now())
     description: str = Field(...)
     
@@ -26,7 +26,7 @@ class BaseLog(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
-class Task(BaseLog):
+class Task(BaseEntry):
     status: TaskStatus = Field(...)
 
     class Config:
@@ -39,7 +39,7 @@ class Task(BaseLog):
             }
         }
 
-class Note(BaseLog):
+class Note(BaseEntry):
 
     class Config:
         schema_extra = {
@@ -50,7 +50,7 @@ class Note(BaseLog):
             }
         }
 
-class Event(BaseLog):
+class Event(BaseEntry):
     event_date: Optional[str] = None
     event_time: Optional[str] = None
 
@@ -65,9 +65,9 @@ class Event(BaseLog):
             }
         }
 
-class UpdateBaseLog(BaseModel):
-    type: Optional[LogType]
+class UpdateBaseEntry(BaseModel):
+    type: Optional[EntryType]
     description: Optional[str]
 
 
-DailyLog = Union[Task, Note, Event]
+Entry = Union[Task, Note, Event]
