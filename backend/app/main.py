@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from core.config import settings
 
+from core.config import settings
 from db.session import lifespan
 from api.base import router
 
