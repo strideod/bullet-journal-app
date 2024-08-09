@@ -24,13 +24,13 @@ class BaseEntry(BaseModel):
     
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 class Task(BaseEntry):
     status: TaskStatus = Field(...)
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "_id": "00000000-0000-0000-0000-000000000000",
                 "type": "task",
@@ -42,7 +42,7 @@ class Task(BaseEntry):
 class Note(BaseEntry):
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "_id": "00000000-0000-0000-0000-000000000000",
                 "type": "note",
@@ -55,7 +55,7 @@ class Event(BaseEntry):
     event_time: Optional[str] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "_id": "00000000-0000-0000-0000-000000000000",
                 "type": "event",
